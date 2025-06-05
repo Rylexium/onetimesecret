@@ -28,12 +28,20 @@
             border-radius: 4px;
             padding: 15px;
             margin: 20px 0;
-            word-break: break-all;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        .link-container {
+            flex-grow: 1;
+            min-width: 0;
         }
         .link {
             color: #0066cc;
             text-decoration: none;
             font-weight: bold;
+            word-break: break-all;
         }
         .link:hover {
             text-decoration: underline;
@@ -52,8 +60,8 @@
             padding: 8px 15px;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 10px;
             font-size: 14px;
+            flex-shrink: 0;
         }
         .copy-btn:hover {
             background-color: #4cae4c;
@@ -76,9 +84,11 @@
         <p>Отправьте эту ссылку тому, кому хотите показать секрет:</p>
 
         <div class="link-box">
-            <a href="{{ url_for('view_secret', secret_id=secret_id) }}" class="link" id="secret-link">
-                {{ request.host_url.rstrip('/') }}{{ url_for('view_secret', secret_id=secret_id) }}
-            </a>
+            <div class="link-container">
+                <a href="{{ url_for('view_secret', secret_id=secret_id) }}" class="link" id="secret-link">
+                    {{ request.host_url.rstrip('/') }}{{ url_for('view_secret', secret_id=secret_id) }}
+                </a>
+            </div>
             <button class="copy-btn" onclick="copyToClipboard()">Копировать ссылку</button>
         </div>
 
