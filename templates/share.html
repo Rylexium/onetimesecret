@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Секретная ссылка</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .link-box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            word-break: break-all;
+        }
+        .link {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+        .warning {
+            color: #d9534f;
+            background-color: #fdf7f7;
+            border-left: 4px solid #d9534f;
+            padding: 10px 15px;
+            margin: 20px 0;
+        }
+        .copy-btn {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .copy-btn:hover {
+            background-color: #4cae4c;
+        }
+        .instructions {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ваша секретная ссылка готова</h1>
+
+        <div class="warning">
+            ⚠️ Внимание! Секрет будет автоматически удален после первого просмотра!
+        </div>
+
+        <p>Отправьте эту ссылку тому, кому хотите показать секрет:</p>
+
+        <div class="link-box">
+            <a href="{{ url_for('view_secret', secret_id=secret_id) }}" class="link" id="secret-link">
+                {{ request.host_url.rstrip('/') }}{{ url_for('view_secret', secret_id=secret_id) }}
+            </a>
+            <button class="copy-btn" onclick="copyToClipboard()">Копировать ссылку</button>
+        </div>
+
+        <div class="instructions">
+            <h3>Инструкция:</h3>
+            <ol>
+                <li>Отправьте эту ссылку получателю (ссылка на секрет активна в течении 24 часов с момента генерации);</li>
+                <li>При переходе по ссылке получатель увидит предупреждение;</li>
+                <li>После подтверждения секрет будет показан и сразу удален;</li>
+                <li>Ссылка перестанет работать после первого использования.</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            const link = document.getElementById('secret-link');
+            const range = document.createRange();
+            range.selectNode(link);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = 'Скопировано!';
+            setTimeout(() => {
+                btn.textContent = 'Копировать ссылку';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

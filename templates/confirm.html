@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подтверждение просмотра</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .warning {
+            color: #d9534f;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+    <h2>Подтверждение просмотра секрета</h2>
+    <div class="warning">
+        Внимание! После просмотра этот секрет будет немедленно удален!
+    </div>
+    <p>Вы уверены, что хотите просмотреть этот секрет?</p>
+    
+    <form action="{{ url_for('confirm_view', secret_id=secret_id) }}" method="POST">
+        <button type="submit">Да, я понимаю последствия</button>
+    </form>
+</body>
+</html>

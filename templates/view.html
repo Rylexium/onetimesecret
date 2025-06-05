@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр секрета</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .secret-box {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .error {
+            color: #d9534f;
+            font-weight: bold;
+        }
+        .info {
+            color: #5bc0de;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Секретное сообщение</h2>
+    
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% else %}
+        <div class="secret-box">{{ secret }}</div>
+        <div class="info">Это сообщение было удалено и больше недоступно.</div>
+    {% endif %}
+</body>
+</html>

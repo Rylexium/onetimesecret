@@ -1,0 +1,1 @@
+python -m pip install --no-index --find-links=. flask cryptography flask_restx
