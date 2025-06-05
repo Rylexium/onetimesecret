@@ -5,29 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Просмотр секрета</title>
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --text: #374151;
+            --light-bg: #f9fafb;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 2rem;
+            color: var(--text);
+            line-height: 1.6;
+            background: white;
         }
+        
+        .secret-container {
+            position: relative;
+            margin: 2rem 0;
+        }
+        
         .secret-box {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 20px;
-            margin: 20px 0;
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
             white-space: pre-wrap;
             word-wrap: break-word;
+            font-size: 1rem;
+            line-height: 1.7;
         }
+        
+        .copy-btn {
+            position: absolute;
+            top: -16px;
+            right: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.6rem 1.25rem;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            overflow: hidden;
+        }
+        
+        .copy-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+        
+        .copy-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        .copy-btn.copied {
+            background: var(--success);
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .copy-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .checkmark {
+			position: absolute;
+			left: 0.1rem; 
+			opacity: 0;
+			transform: scale(0.5);
+			transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+		}
+        
+        .btn-text {
+            transition: all 0.3s ease;
+        }
+        
+		.copied-text {
+			position: absolute;
+			left: 1.1rem; 
+			opacity: 0;
+			transform: translateX(-5px);
+			transition: all 0.3s ease;
+		}
+        
+        .copy-btn.copied .copy-icon {
+            transform: scale(0);
+            opacity: 0;
+        }
+        
+        .copy-btn.copied .checkmark {
+            opacity: 1;
+            transform: scale(1) translateX(0);
+        }
+        
+        .copy-btn.copied .btn-text {
+            opacity: 0;
+            transform: translateX(10px);
+        }
+        
+        .copy-btn.copied .copied-text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .status-message {
+            position: absolute;
+            bottom: -25px;
+            right: 0;
+            font-size: 0.75rem;
+            color: var(--success);
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn.copied ~ .status-message {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .info-text {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        h2 {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1.5rem;
+        }
+        
         .error {
-            color: #d9534f;
-            font-weight: bold;
-        }
-        .info {
-            color: #5bc0de;
-            font-size: 0.9em;
-            margin-top: 20px;
+            color: #ef4444;
+            background: #fef2f2;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -37,8 +173,52 @@
     {% if error %}
         <div class="error">{{ error }}</div>
     {% else %}
-        <div class="secret-box">{{ secret }}</div>
-        <div class="info">Это сообщение было удалено и больше недоступно.</div>
+        <div class="secret-container">
+            <button class="copy-btn" id="copyButton">
+                <div class="btn-content">
+                    <span class="copy-icon">📋</span>
+                    <span class="checkmark">✓</span>
+                    <span class="btn-text">Копировать</span>
+                    <span class="copied-text">Скопировано!</span>
+                </div>
+            </button>
+            <div class="secret-box" id="secretContent">{{ secret }}</div>
+            <div class="status-message">Скопировано в буфер!</div>
+        </div>
+        <div class="info-text">Это сообщение было удалено и больше недоступно.</div>
     {% endif %}
+
+    <script>
+        document.getElementById('copyButton').addEventListener('click', function() {
+            const secretContent = document.getElementById('secretContent');
+            const textToCopy = secretContent.textContent.trim();
+            
+            // Создаем временный textarea для копирования
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            textarea.style.position = 'fixed';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    const btn = document.getElementById('copyButton');
+                    btn.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                    }, 2000);
+                } else {
+                    alert('Не удалось скопировать текст. Попробуйте еще раз.');
+                }
+            } catch (err) {
+                console.error('Ошибка при копировании: ', err);
+                alert('Ошибка при копировании: ' + err);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        });
+    </script>
 </body>
 </html>
