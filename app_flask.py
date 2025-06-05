@@ -155,7 +155,7 @@ ns = Namespace('secrets', description='Операции с секретами', 
 api.add_namespace(ns)
 
 # API Endpoints
-@ns.route('/api/v1/secret')
+@ns.route('/secret')
 class SecretCreate(Resource):
     @ns.expect(secret_model)
     @ns.marshal_with(secret_response_model, code=201)
@@ -181,7 +181,7 @@ class SecretCreate(Resource):
             "url": f"{request.host_url}view/{secret_id}"
         }, 201
 
-@ns.route('/api/v1/secret/<string:secret_id>')
+@ns.route('/secret/<string:secret_id>')
 class SecretGet(Resource):
     @ns.marshal_with(secret_get_model)
     @ns.response(404, 'Секрет не найден')
